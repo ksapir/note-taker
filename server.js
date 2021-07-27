@@ -26,6 +26,29 @@ app.get('/notes', (req,res)=>
 app.get('/api/notes', (req, res) => 
   res.json(notesContent));
 
+app.post('/api/notes', (req,res) => {
+  fs.readFile((path.join(__dirname,'./db/db.json')), 'utf8', (err, data) => {
+    if (err) {
+      console.error(err);
+    } else {
+      const parsedData = JSON.parse(data);
+      console.log(parsedData)
+      parsedData.push(req.body);
+      fs.writeFile('./db/db.json', JSON.stringify(parsedData), (err) =>{
+        if (err) {
+          console.error(err);
+        } 
+        res.json(parsedData)
+      });
+    }
+  });
+})
+
+app.get('*', (req,res)=>
+    res.sendFile(path.join(__dirname,'./public/index.html'))
+);
+
+
 app.listen(PORT, () =>
   console.log(`Example app listening at http://localhost:${PORT}`)
 );
